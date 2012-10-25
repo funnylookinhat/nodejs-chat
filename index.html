@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>NodeJS Redis Chat!</title>
+		<link rel="stylesheet" href="/main.css" type="text/css">
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/overcast/jquery-ui.css" type="text/css">
+	</head>
+	<body>
+		<div id="login">
+			<h2>Please enter a username:</h2>
+			<input type="text" id="username"><br>
+			<button>Start Chatting!</button>
+		</div>
+		<div id="chat" class="hidden">
+
+		</div>
+		
+		<!-- Javascript at the bottom! -->
+		<!-- Thanks CDNJS! -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/main.js"></script>
+	</body>
+</html>

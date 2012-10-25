@@ -1,0 +1,60 @@
+/**
+ * CSS Styles for NodeJS-Redis-Chat
+ */
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow-y: none;
+	overflow-x: none;
+}
+
+* { 
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	outline: none;
+}
+
+body {
+	font-family: Helvetica, Verdana, Arial, serif;
+	background: #e8e8e8;
+	color: #333333;
+}
+
+h1 {
+	font-size: 24px;
+	line-height: 30px;
+}
+
+h2 {
+	font-size: 20px;
+	line-height: 26px;
+}
+
+#login {
+	height: 100%;
+	text-align: center;
+	padding-top: 100px;
+}
+
+#login input[type="text"] {
+	width: 250px;
+}
+
+#login button {
+	margin-top: 15px;
+	width: 150px;
+}
+
+#chat {
+	height: 100%;
+}
+
+
+
+
+
+.hidden {
+	display: none;
+}
