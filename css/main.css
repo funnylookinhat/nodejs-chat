@@ -415,7 +415,7 @@ h1, h2, h3, h4, h5, p {
   -ms-border-radius: 0.625em;
   -o-border-radius: 0.625em;
   border-radius: 0.625em;
-  max-height: 350px;
+  height: 350px;
   overflow: auto; }
   .chat-window .messages {
     list-style: none;
