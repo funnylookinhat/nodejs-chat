@@ -1,5 +1,44 @@
 (function() {
   var chat, signup_form;
+  var myUsername;
+  // Connect to socket.
+  var socket = io.connect('http://localhost');
+
+  socket.on('signon', function(data) {
+    myUsername = data.nick;
+    $('#login-wrap').slideUp();
+    $('#chat-wrap').fadeIn('fast', function() {
+      return $(this).find('.message-input').focus();
+    });
+    $('#main .username-wrap').show();
+    return $('#main .username-placeholder').text(myUsername);
+  });
+
+  socket.on('message', function(data) {
+    var date = new Date(data.time*1000);
+    var timestamp = date.getHours()+':';
+    if( date.getMinutes() < 10 ) {
+      timestamp += '0';
+    }
+    timestamp += date.getMinutes();
+    var classMessage = "received";
+    if( data.nick == myUsername ) {
+      classMessage = "sent";
+    }
+    chat.$chatWindow.find('.messages').append('<li class="'+classMessage+'"><span class="timestamp">' + timestamp + '</span> ' + data.text + ' <span class="username username-placeholder">' + data.nick + '</span></li>');
+    return chat.$chatWindow.animate({
+      scrollTop: chat.$chatWindow.height()
+    }, "fast");
+  });
+
+  /*
+  EVENT:
+  <li class='event neutral'>
+                <span class='timestamp'>hh:mm</span>
+                <a href="#">David</a>
+                joined the chat room
+              </li>
+   */
 
   signup_form = {
     $form: $('#login-wrap > .initialize'),
@@ -8,25 +47,9 @@
     },
     _signIn: function() {
       return signup_form.$form.submit(function(e) {
-        var username;
-        /*
-              DAVID DO YOUR SIGN IN MAGICZ HERE!!!1!1
-        */
-
-        
-        /*
-              DAVID SET THE USERNAME HERE
-        */
-        username = $(this).find('#username').val();
-        /*
-              DAVID PUT THIS IN YOUR CALLBACK:
-        */
-
-        $('#chat-wrap').fadeIn('fast', function() {
-          return $(this).find('.message-input').focus();
-        });
-        $('#main .username-wrap').show();
-        return $('#main .username-placeholder').text(username);
+        e.preventDefault();
+        var username = $(this).find('#username').val();
+        socket.emit('nick',{nick: username});
       });
     }
   };
@@ -39,35 +62,12 @@
     },
     _sendMessage: function() {
       return chat.$compositionForm.submit(function(e) {
-        var message, return_data;
         e.preventDefault();
-
-        /*
-              DAVID THE MESSAGE TO SEND IS STORED IN THE "message" VARIABLE. DUH!
-        */
-        message = $(this).find('.message-input').val() || $(this).find('.message-input').text();
-
-        $(this).find('.message-input').text('').val('');
+        var message, return_data;
         
-        /*
-              DAVID SEND ME BACK AN OBJECT WITH THESE VALUES. MAY NEED MORE LATER
-        */
-        return_data = {
-          timestamp: 'hh:mm',
-          username: 'Username',
-          message: message
-          /*
-                  DAVID SET return_data.message TO THE CHAT MESSAGE THE SERVER SENT TO THE USER
-          */
-
-        };
-        /*
-              DAVID THE FOLLOWING IS THE CALLBACK FOR A SUCCESFULLY SENT MESSAGE
-        */
-        chat.$chatWindow.find('.messages').append('<li class="sent"><span class="timestamp">' + return_data.timestamp + '</span> ' + return_data.message + ' <span class="username username-placeholder">' + return_data.username + '</span></li>');
-        return chat.$chatWindow.animate({
-          scrollTop: chat.$chatWindow.height()
-        }, "fast");
+        message = $(this).find('.message-input').val() || $(this).find('.message-input').text();
+        socket.emit('message',{text:message});
+        $(this).find('.message-input').text('').val('');
       });
     }
   };

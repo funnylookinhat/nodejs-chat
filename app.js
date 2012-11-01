@@ -47,16 +47,6 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
-// TODO - Restructure this to handle entire event.
-function addMessage(socket,username,text) {
-	var eventTime = String(Math.round(new Date().getTime() / 1000));
-	// Add database caching here.
-	socket.broadcastEmit('message',{
-		nick: username,
-		text: text,
-		time: eventTime
-	});
-}
 
 // Socket Listeners and Events
 io.sockets.on('connection', function (socket) {
@@ -74,7 +64,9 @@ io.sockets.on('connection', function (socket) {
   	db.set(DB_PRE+DB_USERNAME_PRE+socket.id,data.nick);
   	if( oldUsername == null ) {
   		// New user joined chat.
-  		socket.broadcastEmit('event',{
+  		socket.emit('signon',{nick:data.nick});
+
+      socket.broadcast.emit('event',{
   			text: data.nick+' has joined the room.',
   			type: 'neutral',
   			time: eventTime
@@ -83,7 +75,7 @@ io.sockets.on('connection', function (socket) {
   		// This would be the place to do it.
   	} else {
   		// User changed nick.
-  		socket.broadcastEmit('event',{
+  		socket.broadcast.emit('event',{
   			text: oldUsername+' has changed their name to '+data.nick+'.',
   			type: 'neutral',
   			time: eventTime
@@ -94,27 +86,38 @@ io.sockets.on('connection', function (socket) {
   // 'message' Event
   // Send a message.
   socket.on('message', function(data) {
-  	var eventTime = String(Math.round(new Date().getTime() / 1000));
+    var eventTime = Math.round(new Date().getTime() / 1000);
   	if( data.text == undefined || 
   		! data.text.length ) {
   		socket.emit('event',{
-			text: 'That message did not include a text element.',
-			type: 'error',
-			time: eventTime
-		});
-  		return;
+  			text: 'That message did not include a text element.',
+  			type: 'error',
+  			time: eventTime
+  		});
+    	return;
   	}
   	// Validate user has set a username.
   	db.get(DB_PRE+DB_USERNAME_PRE+socket.id,function(error,value) {
   		var username = value;
   		if( username == null ) {
-  			socket.emit('event',{
+        socket.emit('event',{
   				text: 'You must set a nickname before you can send messages.',
   				type: 'error',
   				time: eventTime
   			});
   		} else {
-  			addMessage(socket,username,data.text);
+  			var eventTime = String(Math.round(new Date().getTime() / 1000));
+        // Add database caching here.
+        socket.broadcast.emit('message',{
+          nick: username,
+          text: data.text,
+          time: eventTime
+        });
+        socket.emit('message',{
+          nick: username,
+          text: data.text,
+          time: eventTime
+        });
   		}
   	});
   });
