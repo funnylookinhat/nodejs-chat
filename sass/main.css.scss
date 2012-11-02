@@ -1,0 +1,70 @@
+@charset "utf-8";
+
+@import "compass/css3";
+@import "compass/typography";
+@import "compass/layout/stretching";
+@import "compass/utilities";
+
+// ===================
+// FUNCTIONS
+// ===================
+
+// convert an inner width to a percentage
+@function percent($target, $context) {
+	@return ($target / $context) * 100%
+}
+
+// convert a pixel value to em
+@function em($px, $base: $base-font-size) {
+	@return ($px / $base) * 1em;
+}
+// END functions
+
+// ===================
+// MIXINS
+// ===================
+
+// clearfix
+@mixin clear {
+	&:after {
+		content: "";
+		display: block;
+		height: 0;
+		clear: both;
+		width: 100%;
+	}
+	* html & { height: 1px }
+}
+// makes images responsive
+@mixin responsive-image {
+	width: auto\9;
+	height: auto;
+	max-width: 100%;
+	vertical-align: middle;
+	border: 0;
+	-ms-interpolation-mode: bicubic;
+}
+// END mixins
+
+// font style variables
+$serif: Georgia, serif;
+$sans-serif: Helvetica, Arial, sans-serif;
+$monospace: 'Courier New', Courier;
+$text-color: #212121;
+$default-text-shadow-color: rgba(0,0,0,0.7);
+$default-text-shadow-blur: 1px;
+$default-text-shadow-v-offset: 1px;
+
+// sizing
+$outer_width: em(720px);
+$outer_padding: em(12px);
+$inner_padding: em(12px);
+
+// breakpoints (from a max-width perspective)
+$smallest: em(420px);
+$small: em(600px);
+$medium: em(820px);
+$large: $outer_width - em(1px);
+
+// custom theme styles
+@import "theme";

@@ -1,0 +1,70 @@
+#login-wrap {
+	width: 80%;
+	margin: em(40px) auto;
+	input[type="text"] {
+		padding: em(6px) em(6px) em(2px) 0;
+		border: none;
+		border-bottom: 1px solid;
+	}
+	label {
+		display: block;
+		text-align: center;
+	}
+	.actions {
+		text-align: center;
+		margin: em(22px) auto 0;
+	}
+	input[type="text"] {
+		margin-left: 6px;
+	}
+	input[type="submit"] {
+		border: none;
+		color: white;
+		font-weight: bold;
+		padding: 10px;
+		@include border-radius(.45em);
+		background: rgb(15, 43, 76);
+		cursor: pointer;
+		@include background-image(linear-gradient(rgb(24, 84, 119), rgb(15, 43, 76) 90%, rgb(15, 43, 76)));
+		&:active {
+			@include background-image(linear-gradient(rgb(15, 43, 76), rgb(15, 43, 76) 90%, rgb(24, 84, 119)));
+		}
+	}
+}
+
+.chat-entry {
+	position: relative;
+	height: em(50px);
+	margin-top: em(8px);
+	&.theme-default {
+		.message-input {
+			@include inline-block;
+			width: 80%;
+			border: 1px solid rgb(230, 230, 230);
+			left: 0;
+			padding: em(6px);
+			font-family: $serif;
+		}
+		input[type="submit"] {
+			@include inline-block;
+			width: 19.999999%;
+			background: rgb(230, 230, 230);
+			@include background-image(linear-gradient(rgb(255, 255, 255), rgb(238, 238, 238) 70%, rgb(219, 219, 219)));
+			border: 1px solid rgb(170, 170, 170);
+			color: $text-color;
+			font-weight: bold;
+			right: 0;
+			cursor: pointer;
+			@include border-radius(em(6px));
+			&:active {
+				@include background-image(linear-gradient(rgb(219, 219, 219), rgb(238, 238, 238) 30%, rgb(255, 255, 255)));
+			}
+		}
+		.message-input, input[type="submit"] {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			height: 100%;
+		}
+	}
+}

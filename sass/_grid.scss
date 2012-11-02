@@ -1,0 +1,114 @@
+.container {
+	max-width: $outer_width;
+	margin: 0 auto;
+	padding: $outer_padding;
+}
+
+
+// ===========================
+// TWO-COLUMN GRID
+// ===========================
+.halves {
+	@include clear;
+	position: relative;
+	.col {
+		float: left;
+		width: percent(4999px, 10000px);
+		& + .col {
+			float: right;
+		}
+	}
+	// FAUX COLUMNS
+	.faux-columns:before { // full-height hack for halves
+		position: absolute;
+		height: 100%;
+		width: 0;
+		left: 50%;
+		top: 0;
+		content: '';
+		display: block;
+		border-right: 1px dotted;
+		@media (max-width:$small) {
+			display: none;
+		}
+	}
+	// END faux columns
+
+	@media (max-width:$small) {
+		.col .col, .col .col + .col {
+			width: 100%;
+			float: none;
+		}
+	}
+	@media (max-width:$smallest) {
+		.col {
+			width: 100%;
+			float: none;
+			& + .col {
+				float: none;
+			}
+		}
+	}
+}
+// END .halves
+
+
+// ===========================
+// THREE-COLUMN GRID
+// ===========================
+.thirds {
+	@include clear;
+	position: relative;
+	.col {
+		float: left;
+		width: 33.333333%;
+		&.col:last-child {
+			float: right;
+		}
+	}
+	// FAUX COLUMNS
+	.faux-columns:before { // full-height hack for thirds
+		position: absolute;
+		height: 100%;
+		width: 0;
+		left: 33.333333%;
+		top: 0;
+		content: '';
+		display: block;
+		border-right: 1px dotted;
+		@media (max-width:$small) {
+			display: none;
+		}
+	}
+	.faux-columns:after { // full-height hack for thirds
+		position: absolute;
+		height: 100%;
+		width: 0;
+		right: 33.333333%;
+		top: 0;
+		content: '';
+		display: block;
+		border-right: 1px dotted;
+		@media (max-width:$small) {
+			display: none;
+		}
+	}
+	// END .faux-columns
+	
+	@media (max-width:$medium) {
+		.col .col {
+			width: 100%;
+			float: none;
+		}
+	}
+	@media (max-width:$small) {
+		.col {
+			width: 100%;
+			float: none;
+			&.col:last-child {
+				float: none;
+			}
+		}
+	}
+}
+// END .thirds
