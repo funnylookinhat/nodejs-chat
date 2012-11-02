@@ -1,3 +1,40 @@
+/**
+ * Emit Types and Data Schemes
+ *
+ * --- These are sent FROM the SERVER to the CLIENT ---
+ * 
+ * signon: Sent when you've successfully set a username and can post messages.
+ *   .nick : The nickname you've set.
+ *
+ * event: An event has happened in the chatroom ( generally emoted by a person )
+ *   .nick : The user who the event pertains to
+ *   .text : The text of the event.
+ *   .type : The type ( i.e. error, neutral, success )
+ *   .time : The GMT unix timestamp.
+ *
+ * message: A message has been sent.
+ *   .nick : The user who sent the message.
+ *   .text : The message text.
+ *   .time : The GMT unix timestamp.
+ *
+ * error: An error occurred
+ *   .text : The error message
+ *
+ *
+ * --- These are sent FROM the CLIENT to the SERVER ---
+ *
+ * message: Send a message
+ *   .text : The text of the message
+ *
+ * nick: Set or update the user's nickname
+ *   .nick : The new username for the user.
+ *   * NOTE *  When setting a new nickname, you should not 
+ *             update the client until the "signon" event is emited
+ *             with the new nickname.
+ * 
+ */
+
+
 // Includes
 var sanitize = require('./includes/sanitize');
 
@@ -45,10 +82,13 @@ io.sockets.on('connection', function (socket) {
   	nicks[socket.id] = data.nick;
     if( oldUsername == null ) {
       // New user joined chat.
-      socket.emit('signon',{nick:data.nick});
+      socket.emit('signon',{
+        nick:data.nick
+      });
 
       socket.broadcast.emit('event',{
-        text: data.nick+' has joined the room.',
+        nick: data.nick,
+        text: ' has joined the room.',
         type: 'neutral',
         time: eventTime
       });
@@ -56,8 +96,13 @@ io.sockets.on('connection', function (socket) {
       // This would be the place to do it.
     } else {
       // User changed nick.
+      socket.emit('signon',{
+        nick:data.nick
+      });
+      
       socket.broadcast.emit('event',{
-        text: oldUsername+' has changed their name to '+data.nick+'.',
+        nick: oldUsername,
+        text: ' has changed their name to '+data.nick+'.',
         type: 'neutral',
         time: eventTime
       });
@@ -70,10 +115,8 @@ io.sockets.on('connection', function (socket) {
     var eventTime = Math.round(new Date().getTime() / 1000);
   	if( data.text == undefined || 
   		! data.text.length ) {
-  		socket.emit('event',{
-  			text: 'That message did not include a text element.',
-  			type: 'error',
-  			time: eventTime
+  		socket.emit('error',{
+  			text: 'That message did not include a text element.'
   		});
     	return;
   	}
@@ -81,10 +124,8 @@ io.sockets.on('connection', function (socket) {
     // Validate user has set a username.
     if( nicks[socket.id] == undefined ||
         nicks[socket.id] == null ) {
-      socket.emit('event',{
-  		  text: 'You must set a nickname before you can send messages.',
-  		  type: 'error',
-  		  time: eventTime
+      socket.emit('error',{
+  		  text: 'You must set a nickname before you can send messages.'
   		});
   	} else {
   		var eventTime = String(Math.round(new Date().getTime() / 1000));
