@@ -6,11 +6,11 @@
  * 		.nick		: The nickname as recognized by the server
  */
 exports.Signon = (function (params) {
-  var constructor = function (params) {
-    this.nick = params.nick != undefined ? params.nick : null;
-  }
-  
-  return constructor();
+  var packet = {};
+
+  packet.nick = params.nick != undefined ? params.nick : null;
+
+  return packet;
 });
 
 /* Message
@@ -21,13 +21,13 @@ exports.Signon = (function (params) {
  * 		.time		: Unix timestamp for message (GMT)
  */
 exports.Message = (function (params) {
-  var constructor = function (params) {
-    this.message = params.message != undefined ? params.message : null;
-    this.nick = params.nick != undefined ? params.nick : null;
-    this.time = params.time != undefined ? params.time : null;
-  }
-  
-  return constructor();
+  var packet = {};
+
+  packet.text = params.text != undefined ? params.text : null;
+  packet.nick = params.nick != undefined ? params.nick : null;
+  packet.time = params.time != undefined ? params.time : String(Math.round(new Date().getTime() / 1000));
+
+  return packet;
 });
 
 /* Notification
@@ -39,14 +39,14 @@ exports.Message = (function (params) {
  * 		.time		: Unix timestamp for message (GMT)
  */
 exports.Notification = (function (params) {
-  var constructor = function (params) {
-    this.nick = params.nick != undefined ? params.nick : null;
-    this.type = params.type != undefined ? params.type : null;
-    this.text = params.text != undefined ? params.text : null;
-    this.time = params.time != undefined ? params.time : null;
-  }
+  var packet = {};
   
-  return constructor();
+  packet.nick = params.nick != undefined ? params.nick : null;
+  packet.type = params.type != undefined ? params.type : null;
+  packet.text = params.text != undefined ? params.text : null;
+  packet.time = params.time != undefined ? params.time : String(Math.round(new Date().getTime() / 1000));
+  
+  return packet;
 });
 
 /* Error
@@ -56,10 +56,10 @@ exports.Notification = (function (params) {
  *    .event  : The emitted event that the error is in response to.
  */
 exports.Error = (function (params) {
-  var constructor = function (params) {
-    this.text = params.nick != undefined ? params.nick : null;
-    this.event = params.event != undefined ? params.event : null;
-  }
+  var packet = {};
+
+  packet.text = params.nick != undefined ? params.nick : null;
+  packet.event = params.event != undefined ? params.event : null;
   
-  return constructor();
+  return packet;
 });
