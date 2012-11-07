@@ -18,7 +18,7 @@
  *   .time : The GMT unix timestamp.
  *
  * error: An error occurred
- *   .text : The error message
+ *   .text : The error messagez
  *
  *
  * --- These are sent FROM the CLIENT to the SERVER ---
@@ -37,6 +37,7 @@
 
 // Includes
 var sanitize = require('./includes/sanitize');
+var packets = require('./libs/packets');
 
 // Basic HTTP Delivery with Express
 var express = require('express');
@@ -51,21 +52,10 @@ var io = require('socket.io').listen(server);
 // Start basic web server.
 server.listen(1337);
 
-// CSS
-app.get('/css/*', function(req, res) {
-	res.sendfile('./css/'+req.params[0]);
+var static = require('./libs/static')({
+  app: app,
+  baseDirectory: __dirname
 });
-
-// JS
-app.get('/js/*', function(req, res) {
-	res.sendfile('./js/'+req.params[0]);
-});
-
-// index.html
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
-});
-
 
 // Socket Listeners and Events
 io.sockets.on('connection', function (socket) {

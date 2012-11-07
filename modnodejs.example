@@ -1,0 +1,22 @@
+// module.js
+
+var dep;
+
+exports = module.exports = function(options) {
+    dep = options.dep
+};
+
+exports.foo = function() {
+
+};
+
+exports.bar = function() {
+
+};
+
+// use the module
+
+var mymodule = require('./module.js')(options);
+
+mymodule.foo()
+mymodule.bar();
