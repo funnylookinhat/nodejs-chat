@@ -86,7 +86,7 @@ exports = module.exports = function(params) {
         log.unshift({
           event: 'message',
           packet: packets.Message({
-            nick: nicks[socket.id],
+            nick: String(nicks[socket.id]),
             text: data.text
           })
         });

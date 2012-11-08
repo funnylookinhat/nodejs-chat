@@ -31,9 +31,26 @@
     }, "fast");
   });
 
+  socket.on('notification', function(data) {
+    var date = new Date(data.time*1000);
+    var timestamp = date.getHours()+':';
+    if( date.getMinutes() < 10 ) {
+      timestamp += '0';
+    }
+    timestamp += date.getMinutes();
+    var classMessage = "received";
+    if( data.nick == myUsername ) {
+      classMessage = "sent";
+    }
+    chat.$chatWindow.find('.messages').append('<li class="event '+data.type+'"><span class="timestamp">' + timestamp + '</span> '+'<a href="#">' + data.nick + '</a>' + data.text + '</li>');
+    return chat.$chatWindow.animate({
+      scrollTop: chat.$chatWindow.height()
+    }, "fast");
+  });
+
   /*
   EVENT:
-  <li class='event neutral'>
+ 
                 <span class='timestamp'>hh:mm</span>
                 <a href="#">David</a>
                 joined the chat room
