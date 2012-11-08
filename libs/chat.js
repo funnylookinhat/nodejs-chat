@@ -18,9 +18,8 @@ exports = module.exports = function(params) {
     // Change or set a nickname.
     socket.on('nick', function(data) {
       var oldUsername = null;
-      if( nicks[socket.id] != undefined &&
-        nicks[socket.id] != null ) {
-        oldUsername = value;
+      if( nicks[socket.id] != null ) {
+        oldUsername = nicks[socket.id];
       }
       nicks[socket.id] = data.nick;
       
@@ -100,21 +99,23 @@ exports = module.exports = function(params) {
 
     // User disconnects from chatroom.
     socket.on('disconnect', function () {
-      var nick = String(nicks[socket.id]);
-      nicks.splice(socket.id,1);
+      if( nicks[socket.id] != null ) {
+        var nick = String(nicks[socket.id]);
+        nicks.splice(socket.id,1);
 
-      log.unshift({
-        event: 'notification',
-        packet: packets.Notification({
-          nick: nick,
-          type: 'neutral',
-          text: ' has left the room.'
-        })
-      });
+        log.unshift({
+          event: 'notification',
+          packet: packets.Notification({
+            nick: nick,
+            type: 'neutral',
+            text: ' has left the room.'
+          })
+        });
 
-      socket.broadcast.emit(log[0].event,log[0].packet);
-      if( log.length > 10 ) {
-        log.pop();
+        socket.broadcast.emit(log[0].event,log[0].packet);
+        if( log.length > 10 ) {
+          log.pop();
+        }
       }
     });
   });
