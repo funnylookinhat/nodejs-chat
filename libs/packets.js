@@ -25,7 +25,7 @@ exports.Message = (function (params) {
 
   packet.text = params.text != undefined ? params.text : null;
   packet.nick = params.nick != undefined ? params.nick : null;
-  packet.time = params.time != undefined ? params.time : String(Math.round(new Date().getTime() / 1000));
+  packet.time = params.time != undefined ? params.time : String(Math.round(Date.now() / 1000));
 
   return packet;
 });
@@ -44,7 +44,7 @@ exports.Notification = (function (params) {
   packet.nick = params.nick != undefined ? params.nick : null;
   packet.type = params.type != undefined ? params.type : null;
   packet.text = params.text != undefined ? params.text : null;
-  packet.time = params.time != undefined ? params.time : String(Math.round(new Date().getTime() / 1000));
+  packet.time = params.time != undefined ? params.time : String(Math.round(Date.now() / 1000));
   
   return packet;
 });
