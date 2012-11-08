@@ -97,6 +97,26 @@ exports = module.exports = function(params) {
         }
       }
     });
+
+    // User disconnects from chatroom.
+    socket.on('disconnect', function () {
+      var nick = String(nicks[socket.id]);
+      nicks.splice(socket.id,1);
+
+      log.unshift({
+        event: 'notification',
+        packet: packets.Notification({
+          nick: nick,
+          type: 'neutral',
+          text: ' has left the room.'
+        })
+      });
+
+      socket.broadcast.emit(log[0].event,log[0].packet);
+      if( log.length > 10 ) {
+        log.pop();
+      }
+    });
   });
 };
 
