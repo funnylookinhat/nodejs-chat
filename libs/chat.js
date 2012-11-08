@@ -87,7 +87,7 @@ exports = module.exports = function(params) {
           event: 'message',
           packet: packets.Message({
             nick: String(nicks[socket.id]),
-            text: data.text
+            text: sanitize.strip_tags(data.text)
           })
         });
         socket.emit(log[0].event,log[0].packet);
