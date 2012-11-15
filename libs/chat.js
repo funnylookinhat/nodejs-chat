@@ -5,7 +5,13 @@ var packets = require('./packets');
 
 var io;
 var nicks = [];
+var messagetimes = [];
+var messagecount = [];
 var log = [];		// Array of Objects with .event and .packet
+
+var MESSAGE_COUNT_LIMIT = 5; // 5 Messages
+var MESSAGE_TIME_LIMIT = 8;  // Per 8 Seconds
+var MESSAGE_RATE_LIMIT = Math.round(MESSAGE_COUNT_LIMIT / MESSAGE_TIME_LIMIT * 100) / 100;  // 5 Messages per 8 Seconds
 
 // Note
 // pop() = remove last element
@@ -81,18 +87,48 @@ exports = module.exports = function(params) {
           event: 'message',
           text: 'You must set a nickname before you can send messages.'
         }));
-      } else {  
-        log.unshift({
-          event: 'message',
-          packet: packets.Message({
-            nick: String(nicks[socket.id]),
-            text: sanitize.strip_tags(data.text)
-          })
-        });
-        socket.emit(log[0].event,log[0].packet);
-        socket.broadcast.emit(log[0].event,log[0].packet);
-        if( log.length > 10 ) {
-          log.pop();
+      } else { 
+        // Make sure user hasn't sent too many messages.
+        // Essentially we rate limit - or have them wait a max of MESSAGE_TIME_LIMIT seconds
+        if( messagetimes[socket.id] == null || 
+            messagecount[socket.id] == null || 
+            messagecount[socket.id] <= MESSAGE_COUNT_LIMIT || 
+            ( messagecount[socket.id] / ( Math.round(Date.now() / 1000) - messagetimes[socket.id] ) ) < MESSAGE_RATE_LIMIT || 
+            Math.round(Date.now() / 1000) - messagetimes[socket.id] > MESSAGE_TIME_LIMIT ) {
+          if( messagetimes[socket.id] == null ||
+              messagecount[socket.id] > MESSAGE_COUNT_LIMIT ) {
+            messagetimes[socket.id] = Math.round(Date.now() / 1000);
+          }
+          if( messagecount[socket.id] == null ||
+              messagecount[socket.id] > MESSAGE_COUNT_LIMIT ) {
+            messagecount[socket.id] = 0;
+          }
+          messagecount[socket.id] += 1;
+
+          log.unshift({
+            event: 'message',
+            packet: packets.Message({
+              nick: String(nicks[socket.id]),
+              text: sanitize.strip_tags(data.text)
+            })
+          });
+          socket.emit(log[0].event,log[0].packet);
+          socket.broadcast.emit(log[0].event,log[0].packet);
+          if( log.length > 10 ) {
+            log.pop();
+          }
+        } else {
+          messagecount[socket.id] += 1;
+          // Error too frequent.
+          var errorText = 'You are attempting to send too many messages at once... '+
+                          'please wait before sending another message.';
+          if( ( messagecount[socket.id] / ( Math.round(Date.now() / 1000) - messagetimes[socket.id] ) ) > ( MESSAGE_RATE_LIMIT * 4 ) ) {
+            errorText = 'Seriously - the more you type the longer you wait...';
+          };
+          socket.emit('error',packets.Error({
+            event: 'message',
+            text: errorText
+          }));
         }
       }
     });

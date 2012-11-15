@@ -58,7 +58,7 @@ exports.Notification = (function (params) {
 exports.Error = (function (params) {
   var packet = {};
 
-  packet.text = params.nick != undefined ? params.nick : null;
+  packet.text = params.text != undefined ? params.text : null;
   packet.event = params.event != undefined ? params.event : null;
   
   return packet;

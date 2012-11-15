@@ -27,7 +27,7 @@
     }
     chat.$chatWindow.find('.messages').append('<li class="'+classMessage+'"><span class="timestamp">' + timestamp + '</span> ' + data.text + ' <span class="username username-placeholder">' + data.nick + '</span></li>');
     return chat.$chatWindow.animate({
-      scrollTop: chat.$chatWindow.height()
+      scrollTop: chat.$chatWindow.find('.messages').height()
     }, "fast");
   });
 
@@ -44,7 +44,14 @@
     }
     chat.$chatWindow.find('.messages').append('<li class="event '+data.type+'"><span class="timestamp">' + timestamp + '</span> '+'<a href="#">' + data.nick + '</a>' + data.text + '</li>');
     return chat.$chatWindow.animate({
-      scrollTop: chat.$chatWindow.height()
+      scrollTop: chat.$chatWindow.find('.messages').height()
+    }, "fast");
+  });
+
+  socket.on('error', function(data) {
+    chat.$chatWindow.find('.messages').append('<li class="event error">'+ data.text + '</li>');
+    return chat.$chatWindow.animate({
+      scrollTop: chat.$chatWindow.find('.messages').height()
     }, "fast");
   });
 
